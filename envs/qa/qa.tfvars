@@ -1,3 +1,3 @@
-environment = "qa"
+environment       = "qa"
 enable_versioning = true
-prefix = "seemat"
+prefix            = "seemat"

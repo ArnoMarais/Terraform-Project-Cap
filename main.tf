@@ -10,10 +10,10 @@ variable "enable_versioning" {}
 # }
 
 ##eks from our custom module
-module "eks"{
-    source = "./modules/capitec_eks"
-    environment = var.environment
-    prefix = var.prefix
+module "eks" {
+  source      = "./modules/capitec_eks"
+  environment = var.environment
+  prefix      = var.prefix
 }
 
 

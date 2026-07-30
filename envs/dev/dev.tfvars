@@ -1,3 +1,3 @@
-environment = "dev"
+environment       = "dev"
 enable_versioning = false
-prefix = "seemat"
+prefix            = "seemat"

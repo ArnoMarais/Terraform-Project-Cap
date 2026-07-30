@@ -10,7 +10,7 @@ resource "aws_subnet" "public" {
   map_public_ip_on_launch = true
 
   lifecycle {
-    ignore_changes = [ tags ]
+    ignore_changes = [tags]
   }
 }
 
