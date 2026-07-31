@@ -1,5 +1,5 @@
 name: Terraform
-
+# terraform workflow for GitHub Actions
 on:
   pull_request:
     branches: [main]
