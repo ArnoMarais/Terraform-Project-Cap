@@ -1,5 +1,7 @@
 name: Terraform
 # terraform workflow for GitHub Actions
+# SCOPE: dev only for now. qa and prod are disabled (see "DISABLED" notes below).
+# To re-enable an environment, add it back to the matrix and options lists.
 on:
   pull_request:
     branches: [main]
@@ -11,7 +13,8 @@ on:
         description: "Environment to target"
         required: true
         type: choice
-        options: [dev, qa, prod]
+        # DISABLED for now: qa, prod. Restore as [dev, qa, prod] when in scope.
+        options: [dev]
       action:
         description: "Terraform action"
         required: true
@@ -21,7 +24,7 @@ on:
 env:
   TF_IN_AUTOMATION: "true"
   AWS_REGION: af-south-1
-  TF_VERSION: "1.9.8"
+  TF_VERSION: "1.14.8" # must be >= 1.10 for use_lockfile (S3 native locking)
 
 permissions:
   contents: read
@@ -49,7 +52,8 @@ jobs:
     strategy:
       fail-fast: false
       matrix:
-        env: [dev, qa, prod]
+        # DISABLED for now: qa, prod. Restore as [dev, qa, prod] when in scope.
+        env: [dev]
     permissions:
       contents: read
       id-token: write
@@ -57,10 +61,11 @@ jobs:
     steps:
       - uses: actions/checkout@v4
 
+      # OIDC: no static keys. AWS_ROLE_ARN is the github_actions_role_arn output
+      # from bootstrap/github-oidc, stored as a repository variable.
       - uses: aws-actions/configure-aws-credentials@v4
         with:
-          aws-access-key-id: ${{ secrets.AWS_ACCESS_KEY_ID }}
-          aws-secret-access-key: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
+          role-to-assume: ${{ vars.AWS_ROLE_ARN }}
           aws-region: ${{ env.AWS_REGION }}
 
       - uses: hashicorp/setup-terraform@v3
@@ -119,7 +124,8 @@ jobs:
     strategy:
       fail-fast: false
       matrix:
-        env: [dev, qa, prod]
+        # DISABLED for now: qa, prod. Restore as [dev, qa, prod] when in scope.
+        env: [dev]
     environment: ${{ matrix.env }}
     concurrency:
       group: terraform-apply-${{ matrix.env }}
@@ -130,10 +136,11 @@ jobs:
     steps:
       - uses: actions/checkout@v4
 
+      # OIDC: no static keys. AWS_ROLE_ARN is the github_actions_role_arn output
+      # from bootstrap/github-oidc, stored as a repository variable.
       - uses: aws-actions/configure-aws-credentials@v4
         with:
-          aws-access-key-id: ${{ secrets.AWS_ACCESS_KEY_ID }}
-          aws-secret-access-key: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
+          role-to-assume: ${{ vars.AWS_ROLE_ARN }}
           aws-region: ${{ env.AWS_REGION }}
 
       - uses: hashicorp/setup-terraform@v3
@@ -164,10 +171,11 @@ jobs:
     steps:
       - uses: actions/checkout@v4
 
+      # OIDC: no static keys. AWS_ROLE_ARN is the github_actions_role_arn output
+      # from bootstrap/github-oidc, stored as a repository variable.
       - uses: aws-actions/configure-aws-credentials@v4
         with:
-          aws-access-key-id: ${{ secrets.AWS_ACCESS_KEY_ID }}
-          aws-secret-access-key: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
+          role-to-assume: ${{ vars.AWS_ROLE_ARN }}
           aws-region: ${{ env.AWS_REGION }}
 
       - uses: hashicorp/setup-terraform@v3
@@ -198,7 +206,8 @@ jobs:
     strategy:
       fail-fast: false
       matrix:
-        env: [dev, qa, prod]
+        # DISABLED for now: qa, prod. Restore as [dev, qa, prod] when in scope.
+        env: [dev]
     environment: ${{ matrix.env }}
     concurrency:
       group: terraform-destroy-${{ matrix.env }}
@@ -209,10 +218,11 @@ jobs:
     steps:
       - uses: actions/checkout@v4
 
+      # OIDC: no static keys. AWS_ROLE_ARN is the github_actions_role_arn output
+      # from bootstrap/github-oidc, stored as a repository variable.
       - uses: aws-actions/configure-aws-credentials@v4
         with:
-          aws-access-key-id: ${{ secrets.AWS_ACCESS_KEY_ID }}
-          aws-secret-access-key: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
+          role-to-assume: ${{ vars.AWS_ROLE_ARN }}
           aws-region: ${{ env.AWS_REGION }}
 
       - uses: hashicorp/setup-terraform@v3
