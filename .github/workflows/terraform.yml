@@ -1,5 +1,7 @@
 name: Terraform
 # terraform workflow for GitHub Actions
+# SCOPE: dev only for now. qa and prod are disabled (see "DISABLED" notes below).
+# To re-enable an environment, add it back to the matrix and options lists.
 on:
   pull_request:
     branches: [main]
@@ -59,6 +61,8 @@ jobs:
     steps:
       - uses: actions/checkout@v4
 
+      # OIDC: no static keys. AWS_ROLE_ARN is the github_actions_role_arn output
+      # from bootstrap/github-oidc, stored as a repository variable.
       - uses: aws-actions/configure-aws-credentials@v4
         with:
           role-to-assume: ${{ vars.AWS_ROLE_ARN }}
@@ -132,6 +136,8 @@ jobs:
     steps:
       - uses: actions/checkout@v4
 
+      # OIDC: no static keys. AWS_ROLE_ARN is the github_actions_role_arn output
+      # from bootstrap/github-oidc, stored as a repository variable.
       - uses: aws-actions/configure-aws-credentials@v4
         with:
           role-to-assume: ${{ vars.AWS_ROLE_ARN }}
@@ -165,6 +171,8 @@ jobs:
     steps:
       - uses: actions/checkout@v4
 
+      # OIDC: no static keys. AWS_ROLE_ARN is the github_actions_role_arn output
+      # from bootstrap/github-oidc, stored as a repository variable.
       - uses: aws-actions/configure-aws-credentials@v4
         with:
           role-to-assume: ${{ vars.AWS_ROLE_ARN }}
@@ -210,6 +218,8 @@ jobs:
     steps:
       - uses: actions/checkout@v4
 
+      # OIDC: no static keys. AWS_ROLE_ARN is the github_actions_role_arn output
+      # from bootstrap/github-oidc, stored as a repository variable.
       - uses: aws-actions/configure-aws-credentials@v4
         with:
           role-to-assume: ${{ vars.AWS_ROLE_ARN }}
