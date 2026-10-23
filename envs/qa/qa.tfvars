@@ -1,3 +1,3 @@
-environment       = "qa"
-enable_versioning = true
-prefix            = "seemat"
+environment = "qa"
+# enable_versioning = true
+prefix = "marais-a"

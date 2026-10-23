@@ -29,21 +29,25 @@ data "aws_caller_identity" "current" {}
 # GitHub's OIDC provider thumbprints (root CA fingerprints). AWS validates
 # the token signature via TLS, so these values rarely change and are the
 # ones GitHub/AWS have published for actions.githubusercontent.com.
-resource "aws_iam_openid_connect_provider" "github" {
+# resource "aws_iam_openid_connect_provider" "github" {
+#   url = "https://token.actions.githubusercontent.com"
+
+#   client_id_list = [
+#     "sts.amazonaws.com",
+#   ]
+
+#   thumbprint_list = [
+#     #"6938fd4d98bab03faadb97b34396831e3780aea",
+#     "1c58a3a8518e8759bf075b76b750d4f2df264fcd",
+#   ]
+# }
+
+data "aws_iam_openid_connect_provider" "github" {
   url = "https://token.actions.githubusercontent.com"
-
-  client_id_list = [
-    "sts.amazonaws.com",
-  ]
-
-  thumbprint_list = [
-    "6938fd4d98bab03faadb97b34396831e3780aea",
-    "1c58a3a8518e8759bf075b76b750d4f2df264fcd",
-  ]
 }
 
 resource "aws_iam_role" "github_actions" {
-  name = "github-actions-${var.github_repo}"
+  name = "${var.prefix}-github-actions-${var.github_repo}"
 
   assume_role_policy = jsonencode({
     Version = "2012-10-17"
@@ -51,7 +55,8 @@ resource "aws_iam_role" "github_actions" {
       {
         Effect = "Allow"
         Principal = {
-          Federated = aws_iam_openid_connect_provider.github.arn
+          #Federated = aws_iam_openid_connect_provider.github.arn
+          Federated = data.aws_iam_openid_connect_provider.github.arn
         }
         Action = "sts:AssumeRoleWithWebIdentity"
         Condition = {
@@ -74,7 +79,7 @@ resource "aws_iam_role" "github_actions" {
 # Scoped to what the capitec_eks / capitec_s3 modules actually provision,
 # plus access to the three per-environment state buckets. Not AdministratorAccess.
 resource "aws_iam_role_policy" "github_actions" {
-  name = "terraform-apply"
+  name = "${var.prefix}-terraform-apply"
   role = aws_iam_role.github_actions.id
 
   policy = jsonencode({
@@ -130,12 +135,13 @@ resource "aws_iam_role_policy" "github_actions" {
           "s3:ListBucket",
         ]
         Resource = [
-          "arn:aws:s3:::seemat-s3-dev",
-          "arn:aws:s3:::seemat-s3-dev/*",
-          "arn:aws:s3:::seemat-s3-qa",
-          "arn:aws:s3:::seemat-s3-qa/*",
-          "arn:aws:s3:::seemat-s3-prod",
-          "arn:aws:s3:::seemat-s3-prod/*",
+          "arn:aws:s3:::${var.prefix}-s3-dev",
+          "arn:aws:s3:::${var.prefix}-s3-dev/*",
+          # DISABLED for now: qa and prod are out of scope. Uncomment when in scope.
+          # "arn:aws:s3:::${var.prefix}-s3-qa",
+          # "arn:aws:s3:::${var.prefix}-s3-qa/*",
+          # "arn:aws:s3:::${var.prefix}-s3-prod",
+          # "arn:aws:s3:::${var.prefix}-s3-prod/*",
         ]
       }
     ]

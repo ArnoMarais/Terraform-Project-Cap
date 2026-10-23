@@ -1,4 +1,7 @@
 terraform {
+
+  required_version = ">= 1.10"
+
   required_providers {
     aws = {
       source  = "hashicorp/aws"
@@ -9,5 +12,13 @@ terraform {
 }
 
 provider "aws" {
-  region = "af-south-1"
+  region = var.region
+
+  default_tags {
+    tags = {
+      APP       = var.app_name
+      Owner     = var.owner
+      Developer = var.prefix
+    }
+  }
 }

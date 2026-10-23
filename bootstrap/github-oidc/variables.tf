@@ -7,3 +7,9 @@ variable "github_repo" {
   description = "GitHub repository name (no org prefix), e.g. \"CapitecTerraformInfra\""
   type        = string
 }
+
+
+variable "prefix" {
+  description = "Owner prefix in the form <surname>-<first_initial>"
+  type        = string
+}

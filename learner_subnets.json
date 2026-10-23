@@ -1,0 +1,252 @@
+{
+  "vpc_cidr": "172.31.0.0/16",
+  "region": "af-south-1",
+  "existing_default_subnets": {
+    "af-south-1a": "172.31.0.0/20",
+    "af-south-1c": "172.31.16.0/20",
+    "af-south-1b": "172.31.32.0/20"
+  },
+  "learners": {
+    "vanderwesthuizen-a": {
+      "reserved_block": "172.31.48.0/22",
+      "subnets": {
+        "af-south-1a": "172.31.48.0/24",
+        "af-south-1b": "172.31.49.0/24",
+        "af-south-1c": "172.31.50.0/24"
+      }
+    },
+    "marias-a": {
+      "reserved_block": "172.31.52.0/22",
+      "subnets": {
+        "af-south-1a": "172.31.52.0/24",
+        "af-south-1b": "172.31.53.0/24",
+        "af-south-1c": "172.31.54.0/24"
+      }
+    },
+    "smith-b": {
+      "reserved_block": "172.31.56.0/22",
+      "subnets": {
+        "af-south-1a": "172.31.56.0/24",
+        "af-south-1b": "172.31.57.0/24",
+        "af-south-1c": "172.31.58.0/24"
+      }
+    },
+    "abrahams-c": {
+      "reserved_block": "172.31.60.0/22",
+      "subnets": {
+        "af-south-1a": "172.31.60.0/24",
+        "af-south-1b": "172.31.61.0/24",
+        "af-south-1c": "172.31.62.0/24"
+      }
+    },
+    "maponya-c": {
+      "reserved_block": "172.31.64.0/22",
+      "subnets": {
+        "af-south-1a": "172.31.64.0/24",
+        "af-south-1b": "172.31.65.0/24",
+        "af-south-1c": "172.31.66.0/24"
+      }
+    },
+    "newman-c": {
+      "reserved_block": "172.31.68.0/22",
+      "subnets": {
+        "af-south-1a": "172.31.68.0/24",
+        "af-south-1b": "172.31.69.0/24",
+        "af-south-1c": "172.31.70.0/24"
+      }
+    },
+    "davids-d": {
+      "reserved_block": "172.31.72.0/22",
+      "subnets": {
+        "af-south-1a": "172.31.72.0/24",
+        "af-south-1b": "172.31.73.0/24",
+        "af-south-1c": "172.31.74.0/24"
+      }
+    },
+    "jephthah-e": {
+      "reserved_block": "172.31.76.0/22",
+      "subnets": {
+        "af-south-1a": "172.31.76.0/24",
+        "af-south-1b": "172.31.77.0/24",
+        "af-south-1c": "172.31.78.0/24"
+      }
+    },
+    "nel-j": {
+      "reserved_block": "172.31.80.0/22",
+      "subnets": {
+        "af-south-1a": "172.31.80.0/24",
+        "af-south-1b": "172.31.81.0/24",
+        "af-south-1c": "172.31.82.0/24"
+      }
+    },
+    "baboo-j": {
+      "reserved_block": "172.31.84.0/22",
+      "subnets": {
+        "af-south-1a": "172.31.84.0/24",
+        "af-south-1b": "172.31.85.0/24",
+        "af-south-1c": "172.31.86.0/24"
+      }
+    },
+    "kukard-jp": {
+      "reserved_block": "172.31.88.0/22",
+      "subnets": {
+        "af-south-1a": "172.31.88.0/24",
+        "af-south-1b": "172.31.89.0/24",
+        "af-south-1c": "172.31.90.0/24"
+      }
+    },
+    "johnson-k": {
+      "reserved_block": "172.31.92.0/22",
+      "subnets": {
+        "af-south-1a": "172.31.92.0/24",
+        "af-south-1b": "172.31.93.0/24",
+        "af-south-1c": "172.31.94.0/24"
+      }
+    },
+    "vanniekerk-k": {
+      "reserved_block": "172.31.96.0/22",
+      "subnets": {
+        "af-south-1a": "172.31.96.0/24",
+        "af-south-1b": "172.31.97.0/24",
+        "af-south-1c": "172.31.98.0/24"
+      }
+    },
+    "vanschalkwyk-k": {
+      "reserved_block": "172.31.100.0/22",
+      "subnets": {
+        "af-south-1a": "172.31.100.0/24",
+        "af-south-1b": "172.31.101.0/24",
+        "af-south-1c": "172.31.102.0/24"
+      }
+    },
+    "myeza-l": {
+      "reserved_block": "172.31.104.0/22",
+      "subnets": {
+        "af-south-1a": "172.31.104.0/24",
+        "af-south-1b": "172.31.105.0/24",
+        "af-south-1c": "172.31.106.0/24"
+      }
+    },
+    "pather-l": {
+      "reserved_block": "172.31.108.0/22",
+      "subnets": {
+        "af-south-1a": "172.31.108.0/24",
+        "af-south-1b": "172.31.109.0/24",
+        "af-south-1c": "172.31.110.0/24"
+      }
+    },
+    "olivier-mt": {
+      "reserved_block": "172.31.112.0/22",
+      "subnets": {
+        "af-south-1a": "172.31.112.0/24",
+        "af-south-1b": "172.31.113.0/24",
+        "af-south-1c": "172.31.114.0/24"
+      }
+    },
+    "phahlamohlaka-m": {
+      "reserved_block": "172.31.116.0/22",
+      "subnets": {
+        "af-south-1a": "172.31.116.0/24",
+        "af-south-1b": "172.31.117.0/24",
+        "af-south-1c": "172.31.118.0/24"
+      }
+    },
+    "basson-m": {
+      "reserved_block": "172.31.120.0/22",
+      "subnets": {
+        "af-south-1a": "172.31.120.0/24",
+        "af-south-1b": "172.31.121.0/24",
+        "af-south-1c": "172.31.122.0/24"
+      }
+    },
+    "ramaoka-m": {
+      "reserved_block": "172.31.124.0/22",
+      "subnets": {
+        "af-south-1a": "172.31.124.0/24",
+        "af-south-1b": "172.31.125.0/24",
+        "af-south-1c": "172.31.126.0/24"
+      }
+    },
+    "perumalsami-m": {
+      "reserved_block": "172.31.128.0/22",
+      "subnets": {
+        "af-south-1a": "172.31.128.0/24",
+        "af-south-1b": "172.31.129.0/24",
+        "af-south-1c": "172.31.130.0/24"
+      }
+    },
+    "xayiya-n": {
+      "reserved_block": "172.31.132.0/22",
+      "subnets": {
+        "af-south-1a": "172.31.132.0/24",
+        "af-south-1b": "172.31.133.0/24",
+        "af-south-1c": "172.31.134.0/24"
+      }
+    },
+    "adonis-n": {
+      "reserved_block": "172.31.136.0/22",
+      "subnets": {
+        "af-south-1a": "172.31.136.0/24",
+        "af-south-1b": "172.31.137.0/24",
+        "af-south-1c": "172.31.138.0/24"
+      }
+    },
+    "khabele-n": {
+      "reserved_block": "172.31.140.0/22",
+      "subnets": {
+        "af-south-1a": "172.31.140.0/24",
+        "af-south-1b": "172.31.141.0/24",
+        "af-south-1c": "172.31.142.0/24"
+      }
+    },
+    "baderoen-q": {
+      "reserved_block": "172.31.144.0/22",
+      "subnets": {
+        "af-south-1a": "172.31.144.0/24",
+        "af-south-1b": "172.31.145.0/24",
+        "af-south-1c": "172.31.146.0/24"
+      }
+    },
+    "trimm-s": {
+      "reserved_block": "172.31.148.0/22",
+      "subnets": {
+        "af-south-1a": "172.31.148.0/24",
+        "af-south-1b": "172.31.149.0/24",
+        "af-south-1c": "172.31.150.0/24"
+      }
+    },
+    "mdemka-t": {
+      "reserved_block": "172.31.152.0/22",
+      "subnets": {
+        "af-south-1a": "172.31.152.0/24",
+        "af-south-1b": "172.31.153.0/24",
+        "af-south-1c": "172.31.154.0/24"
+      }
+    },
+    "solomon-w": {
+      "reserved_block": "172.31.156.0/22",
+      "subnets": {
+        "af-south-1a": "172.31.156.0/24",
+        "af-south-1b": "172.31.157.0/24",
+        "af-south-1c": "172.31.158.0/24"
+      }
+    },
+    "learner29": {
+      "reserved_block": "172.31.160.0/22",
+      "subnets": {
+        "af-south-1a": "172.31.160.0/24",
+        "af-south-1b": "172.31.161.0/24",
+        "af-south-1c": "172.31.162.0/24"
+      }
+    },
+    "hlaula-z": {
+      "reserved_block": "172.31.164.0/22",
+      "subnets": {
+        "af-south-1a": "172.31.164.0/24",
+        "af-south-1b": "172.31.165.0/24",
+        "af-south-1c": "172.31.166.0/24"
+      }
+    }
+  }
+}
+ 

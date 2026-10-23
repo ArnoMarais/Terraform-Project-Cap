@@ -1,3 +1,3 @@
-environment       = "prod"
-enable_versioning = true
-prefix            = "seemat"
+environment = "prod"
+# enable_versioning = true
+prefix = "marais-a"

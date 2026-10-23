@@ -1,39 +1,29 @@
-resource "aws_vpc" "main" {
-  cidr_block = "10.0.0.0/16"
-}
 
-resource "aws_subnet" "public" {
-  count                   = length(var.availability_zones)
-  vpc_id                  = aws_vpc.main.id
-  cidr_block              = cidrsubnet(aws_vpc.main.cidr_block, 8, count.index)
-  availability_zone       = var.availability_zones[count.index]
+resource "aws_subnet" "eks_subnets" {
+  for_each = var.subnet_cidrs
+
+  vpc_id                  = var.vpc_id
+  cidr_block              = var.subnet_cidrs[each.key]
+  availability_zone       = each.key
   map_public_ip_on_launch = true
+
+  tags = {
+    Name = "${var.prefix}-subnet-${each.key}-${var.environment}"
+  }
 
   lifecycle {
     ignore_changes = [tags]
   }
 }
 
-resource "aws_internet_gateway" "main" {
-  vpc_id = aws_vpc.main.id
+resource "aws_route_table_association" "public_route_table_association" {
+  for_each = aws_subnet.eks_subnets
+
+  subnet_id      = each.value.id
+  route_table_id = data.aws_route_table.route_table_lookup.id
 }
 
-resource "aws_route_table" "public" {
-  vpc_id = aws_vpc.main.id
-
-  route {
-    cidr_block = "0.0.0.0/0"
-    gateway_id = aws_internet_gateway.main.id
-  }
-}
-
-resource "aws_route_table_association" "public" {
-  count          = length(aws_subnet.public)
-  subnet_id      = aws_subnet.public[count.index].id
-  route_table_id = aws_route_table.public.id
-}
-
-resource "aws_eks_cluster" "example" {
+resource "aws_eks_cluster" "eks_cluster" {
   name = local.eks_cluster_name
 
   access_config {
@@ -41,11 +31,11 @@ resource "aws_eks_cluster" "example" {
     #bootstrap_cluster_creator_admin_permissions = true
   }
 
-  role_arn = aws_iam_role.cluster.arn
-  version  = "1.35"
+  role_arn = aws_iam_role.eks_cluster_role.arn
+  version  = var.eks_version
 
   vpc_config {
-    subnet_ids = aws_subnet.public[*].id
+    subnet_ids = [for s in aws_subnet.eks_subnets : s.id]
   }
 
   # Ensure that IAM Role permissions are created before and deleted
@@ -54,30 +44,20 @@ resource "aws_eks_cluster" "example" {
   depends_on = [
     aws_iam_role_policy_attachment.cluster_AmazonEKSClusterPolicy,
   ]
+
+  tags = {
+    Name = local.eks_cluster_name
+  }
 }
 
-resource "aws_iam_role" "cluster" {
-  name = local.iam_role_name
-  assume_role_policy = jsonencode({
-    Version = "2012-10-17"
-    Statement = [
-      {
-        Action = [
-          "sts:AssumeRole",
-          "sts:TagSession"
-        ]
-        Effect = "Allow"
-        Principal = {
-          Service = "eks.amazonaws.com"
-        }
-      },
-    ]
-  })
+resource "aws_iam_role" "eks_cluster_role" {
+  name               = local.iam_role_name
+  assume_role_policy = data.aws_iam_policy_document.eks_cluster_assume_role.json
 }
 
 resource "aws_iam_role_policy_attachment" "cluster_AmazonEKSClusterPolicy" {
   policy_arn = "arn:aws:iam::aws:policy/AmazonEKSClusterPolicy"
-  role       = aws_iam_role.cluster.name
+  role       = aws_iam_role.eks_cluster_role.name
 }
 
 # authentication_mode = "API" means Kubernetes RBAC access is governed
@@ -86,14 +66,21 @@ resource "aws_iam_role_policy_attachment" "cluster_AmazonEKSClusterPolicy" {
 # to authenticate to the Kubernetes API.
 data "aws_caller_identity" "current" {}
 
+# Access entries need the IAM role or user ARN. aws_caller_identity returns the
+# assumed-role session ARN when running via OIDC (CI) or SSO, which AWS rejects.
+# This resolves the session back to its IAM role. For IAM users it returns the user ARN.
+data "aws_iam_session_context" "current" {
+  arn = data.aws_caller_identity.current.arn
+}
+
 resource "aws_eks_access_entry" "admin" {
-  cluster_name  = aws_eks_cluster.example.name
-  principal_arn = data.aws_caller_identity.current.arn
+  cluster_name  = aws_eks_cluster.eks_cluster.name
+  principal_arn = data.aws_iam_session_context.current.issuer_arn
   type          = "STANDARD"
 }
 
 resource "aws_eks_access_policy_association" "admin" {
-  cluster_name  = aws_eks_cluster.example.name
+  cluster_name  = aws_eks_cluster.eks_cluster.name
   principal_arn = aws_eks_access_entry.admin.principal_arn
   policy_arn    = "arn:aws:eks::aws:cluster-access-policy/AmazonEKSClusterAdminPolicy"
 
@@ -103,19 +90,8 @@ resource "aws_eks_access_policy_association" "admin" {
 }
 
 resource "aws_iam_role" "node" {
-  name = "${var.prefix}-eks-node-role-${var.environment}"
-  assume_role_policy = jsonencode({
-    Version = "2012-10-17"
-    Statement = [
-      {
-        Action = "sts:AssumeRole"
-        Effect = "Allow"
-        Principal = {
-          Service = "ec2.amazonaws.com"
-        }
-      },
-    ]
-  })
+  name               = "${var.prefix}-eks-node-role-${var.environment}"
+  assume_role_policy = data.aws_iam_policy_document.node_assume_role.json
 }
 
 resource "aws_iam_role_policy_attachment" "node_AmazonEKSWorkerNodePolicy" {
@@ -135,31 +111,31 @@ resource "aws_iam_role_policy_attachment" "node_AmazonEC2ContainerRegistryReadOn
 
 resource "aws_security_group_rule" "nodeport_ingress" {
   type              = "ingress"
-  from_port         = 30007
-  to_port           = 30007
+  from_port         = var.nodeport
+  to_port           = var.nodeport
   protocol          = "tcp"
-  cidr_blocks       = ["0.0.0.0/0"]
-  security_group_id = aws_eks_cluster.example.vpc_config[0].cluster_security_group_id
+  cidr_blocks       = var.nodeport_cidr_blocks
+  security_group_id = aws_eks_cluster.eks_cluster.vpc_config[0].cluster_security_group_id
   description       = "Allow inbound access to nginx NodePort service"
 }
 
 resource "aws_eks_node_group" "main" {
-  cluster_name    = aws_eks_cluster.example.name
+  cluster_name    = aws_eks_cluster.eks_cluster.name
   node_group_name = "${var.prefix}-eks-nodes-${var.environment}"
   node_role_arn   = aws_iam_role.node.arn
-  subnet_ids      = aws_subnet.public[*].id
+  subnet_ids      = [for s in aws_subnet.eks_subnets : s.id]
 
-  capacity_type  = "ON_DEMAND"
-  instance_types = ["t3.medium"]
+  capacity_type  = var.node_capacity_type
+  instance_types = [var.node_instance_type]
 
   scaling_config {
-    min_size     = 1
-    max_size     = 3
-    desired_size = 2
+    min_size     = var.node_min_size
+    max_size     = var.node_max_size
+    desired_size = var.node_desired_size
   }
 
   update_config {
-    max_unavailable = 1
+    max_unavailable = var.node_max_unavailable
   }
 
   # Ensure IAM permissions are created before and deleted after the

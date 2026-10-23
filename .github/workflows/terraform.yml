@@ -11,7 +11,8 @@ on:
         description: "Environment to target"
         required: true
         type: choice
-        options: [dev, qa, prod]
+        # options: [dev, qa, prod] Only allow dev for now
+        options: [dev]
       action:
         description: "Terraform action"
         required: true
@@ -21,7 +22,7 @@ on:
 env:
   TF_IN_AUTOMATION: "true"
   AWS_REGION: af-south-1
-  TF_VERSION: "1.9.8"
+  TF_VERSION: "1.14.8"
 
 permissions:
   contents: read
@@ -49,7 +50,8 @@ jobs:
     strategy:
       fail-fast: false
       matrix:
-        env: [dev, qa, prod]
+        # env: [dev, qa, prod]
+        env: [dev]
     permissions:
       contents: read
       id-token: write
@@ -59,8 +61,7 @@ jobs:
 
       - uses: aws-actions/configure-aws-credentials@v4
         with:
-          aws-access-key-id: ${{ secrets.AWS_ACCESS_KEY_ID }}
-          aws-secret-access-key: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
+          role-to-assume: ${{ vars.AWS_ROLE_ARN }}
           aws-region: ${{ env.AWS_REGION }}
 
       - uses: hashicorp/setup-terraform@v3
@@ -119,7 +120,8 @@ jobs:
     strategy:
       fail-fast: false
       matrix:
-        env: [dev, qa, prod]
+        # env: [dev, qa, prod]
+        env: [dev]
     environment: ${{ matrix.env }}
     concurrency:
       group: terraform-apply-${{ matrix.env }}
@@ -132,8 +134,7 @@ jobs:
 
       - uses: aws-actions/configure-aws-credentials@v4
         with:
-          aws-access-key-id: ${{ secrets.AWS_ACCESS_KEY_ID }}
-          aws-secret-access-key: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
+          role-to-assume: ${{ vars.AWS_ROLE_ARN }}
           aws-region: ${{ env.AWS_REGION }}
 
       - uses: hashicorp/setup-terraform@v3
@@ -166,8 +167,7 @@ jobs:
 
       - uses: aws-actions/configure-aws-credentials@v4
         with:
-          aws-access-key-id: ${{ secrets.AWS_ACCESS_KEY_ID }}
-          aws-secret-access-key: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
+          role-to-assume: ${{ vars.AWS_ROLE_ARN }}
           aws-region: ${{ env.AWS_REGION }}
 
       - uses: hashicorp/setup-terraform@v3
@@ -198,7 +198,8 @@ jobs:
     strategy:
       fail-fast: false
       matrix:
-        env: [dev, qa, prod]
+        # env: [dev, qa, prod]
+        env: [dev]
     environment: ${{ matrix.env }}
     concurrency:
       group: terraform-destroy-${{ matrix.env }}
@@ -211,8 +212,7 @@ jobs:
 
       - uses: aws-actions/configure-aws-credentials@v4
         with:
-          aws-access-key-id: ${{ secrets.AWS_ACCESS_KEY_ID }}
-          aws-secret-access-key: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
+          role-to-assume: ${{ vars.AWS_ROLE_ARN }}
           aws-region: ${{ env.AWS_REGION }}
 
       - uses: hashicorp/setup-terraform@v3
