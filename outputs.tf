@@ -58,7 +58,7 @@ output "eks_kubeconfig_command" {
 
 output "eks_deploy_nginx_command" {
   description = "Run from the repo root to deploy the nginx pod and NodePort service"
-  value       = "kubectl apply -f k8s/nginx.yaml"
+  value       = "kubectl apply -f ${local.nginx_manifest}"
 }
 
 output "eks_verify_command" {

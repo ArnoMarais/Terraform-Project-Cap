@@ -138,6 +138,13 @@ resource "aws_eks_node_group" "main" {
     max_unavailable = var.node_max_unavailable
   }
 
+  lifecycle {
+    precondition {
+      condition     = var.node_min_size <= var.node_desired_size && var.node_desired_size <= var.node_max_size
+      error_message = "Node sizes must satisfy node_min_size <= node_desired_size <= node_max_size."
+    }
+  }
+
   # Ensure IAM permissions are created before and deleted after the
   # node group, otherwise EKS cannot properly bootstrap/tear down nodes.
   depends_on = [
