@@ -1,5 +1,6 @@
 environment = "dev"
-prefix = "marais-a"
+prefix      = "marais-a"
+# enable_versioning = false
 
 node_instance_type = "t3.small"
 node_min_size      = 1

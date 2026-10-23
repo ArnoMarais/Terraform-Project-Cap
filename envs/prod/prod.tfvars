@@ -1,5 +1,6 @@
 environment = "prod"
-prefix = "marais-a"
+prefix      = "marais-a"
+# enable_versioning = true
 
 node_instance_type = "t3.medium"
 node_min_size      = 1
